@@ -2,16 +2,12 @@ import { ethers } from "hardhat";
 
 async function main() {
 
-  const token = await ethers.deployContract("Erc2otoken", [unlockTime], {
-    value: lockedAmount,
-);
+  const Token = await ethers.getContractFactory("Erc2otoken");
 
-  await token.waitForDeployment();
+  const token = await Token.deploy("Lawcoin", "law", 5000000000 );
 
   console.log(
-    `Erc20token contract deployed with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${token.target}`
+    `Erc20token contract deployed with deployed to ${token.target}`
   );
 }
 

@@ -25,13 +25,13 @@ contract Erc20token {
     event Approval(
         address indexed sender,
         address indexed receiver,
-        uint worth
+        uint256 worth
     );
 
     event TransferFrom(address _owner, address _receiver, uint256 _worth);
 
     mapping(address => uint256) public balances;
-    mapping(address => mapping(address => uint256 spender)) public _allowance;
+    mapping(address => mapping(address => uint256)) public _allowance;
 
     //name, symbol, decimal
 
@@ -68,10 +68,11 @@ contract Erc20token {
         balances[_receiver] = balances[_receiver] + _amount;
 
         //the 10% calculation
-        uint percentageCalc = (_amount * 10) / 100;
+        uint256 percentageCalc = (_amount * 10) / 100;
         balances[msg.sender] =
             balances[msg.sender] -
             (_amount + percentageCalc);
+        CoinSupply = CoinSupply - percentageCalc;
         emit Transfer(msg.sender, _receiver, _amount);
         return true;
     }
@@ -98,10 +99,15 @@ contract Erc20token {
         uint256 _worth
     ) public returns (bool) {
         require(_worth <= _allowance[__owner][msg.sender]);
+
+        uint256 percentageCalc = (_worth * 10) / 100;
+
         emit TransferFrom(__owner, _receiver, _worth);
         _allowance[__owner][msg.sender] -= _worth;
         balances[_receiver] += _worth;
         balances[__owner] -= _worth;
+        balances[msg.sender] = balances[msg.sender] - (_worth + percentageCalc);
+        CoinSupply = CoinSupply - percentageCalc;
         return true;
     }
 }
