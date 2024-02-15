@@ -94,18 +94,17 @@ contract Erc20token {
     }
 
     function transferFrom(
-        address __owner,
+        address _spender,
         address _receiver,
         uint256 _worth
     ) public returns (bool) {
-        require(_worth <= _allowance[__owner][msg.sender]);
+        require(_worth <= _allowance[msg.sender][_spender]);
 
         uint256 percentageCalc = (_worth * 10) / 100;
 
-        emit TransferFrom(__owner, _receiver, _worth);
-        _allowance[__owner][msg.sender] -= _worth;
+        emit TransferFrom(_spender, _receiver, _worth);
+        _allowance[msg.sender][_spender] -= _worth;
         balances[_receiver] += _worth;
-        balances[__owner] -= _worth;
         balances[msg.sender] = balances[msg.sender] - (_worth + percentageCalc);
         CoinSupply = CoinSupply - percentageCalc;
         return true;
